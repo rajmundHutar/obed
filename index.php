@@ -1,6 +1,7 @@
 <?php
 
-ini_set('display_errors', 'off');
+//ini_set('display_errors', 'on');
+//ini_set('error_reporting', E_ALL);
 require_once dirname(__FILE__) . '/lib.php';
 require_once dirname(__FILE__) . '/cfg.php';
 
@@ -14,6 +15,24 @@ if (isset($_GET['json'])) {
 header('content-type: text/html; charset=utf-8');
 print_html_head($root);
 ?>
+
+<style>
+    h1, a {
+        color: #69a120;
+    }
+
+    #panel-picker {
+        color: #69a120;
+    }
+
+    #panel-picker-menu li:hover {
+        color: #69a120;
+    }
+
+    #body {
+        margin-bottom: 1em;
+    }
+</style>
 
 <body>
 	<div id="body">

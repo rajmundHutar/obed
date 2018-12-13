@@ -27,7 +27,7 @@ class LaCorrida extends LunchMenuSource {
 
 			foreach ($div->find("div#tabs-{$today} div.menu-item") as $i => $item) {
 
-				$dishName = !!$item->find('.menu-con > p', 1)->plaintext ? $item->find('.menu-con > p', 1)->plaintext : $item->find('.menu-con p', 0)->plaintext;
+				$dishName = $item->find('.menu-con > p', 0)->plaintext;
 
 				if ($i == 0) {
 					// Soup

@@ -11,25 +11,16 @@ if (isset($_GET['force'])) {
 	$cache_menza_interval = 0;
 }
 
-
-$menza_close = strtotime('2018-06-15 23:59:59');
-$menza_open = strtotime('2018-09-17 00:00:01');
-
-
 $sources = [
-	new Source(new Zomato(16506890, 'Camel', 'http://www.restaurace-camel.com/', 'camel')),
-	new Source(new Zomato(16505998, 'U 3 opic', 'http://www.u3opic.cz/', 'monkey')),
-	new Source(new Velorex), //Zomato(16506807, 'Velorex', 'http://www.restauracevelorex.cz/', 'velorex')),
-	new Source(new Zomato(16506806, 'Pad Thai', 'http://padthairestaurace.cz/', 'japanese')),
-	new Source(new Zomato(16505880, 'Yvy Restaurant', 'http://www.yvy.cz/', 'yvy')),
-	new Source(new Nepal),
-	new Source(new CharliesMill),
-	new Source(new Zomato(18318157, 'Semilasso', 'http://restaurace-semilasso.cz/', 'semilasso')),
-	new Source(new Kralovska),
-	new Source(new KlubCestovatelu),
+	new Source(new LaCorrida),
+	new Source(new Sono),
+	new Source(new MenickaCz('Seven bistro', 'https://www.menicka.cz/4838-seven-food.html', 'seven')),
+	new Source(new Zomato(16506537, 'Everest', 'http://everestbrno.cz/index.html', 'everest')),
+	new Source(new Zomato(18578705, 'Siwa', 'http://www.siwaorient.cz/', 'siwa')),
+	new Source(new Zomato(16506040, 'Šelepka', 'http://www.selepova.cz/denni-menu/', 'selepka')),
+	new Source(new ZelenaKocka),
+	new Source(new NaberSi),
+	new Source(new UMlsnychKocek),
+	new Source(new MenickaCz('Restaurace U Putchy', 'https://www.menicka.cz/5350-restaurace-u-putchy-.html', 'putcha')),
+	new Source(new Zomato(16507460, 'Viva', 'http://www.pizzerie-viva.cz/', 'pizza')),
 ];
-
-
-if (get_today_timestamp() < $menza_close || get_today_timestamp() > $menza_open) {
-	$sources[] = new Source(new Menza, 60);
-}
