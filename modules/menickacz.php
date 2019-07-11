@@ -25,18 +25,14 @@ class MenickaCz extends LunchMenuSource {
 				throw new ScrapingFailedException("ul.fmenu li.item was not found");
 			}
 
-			$dishes = [];
-			foreach ($todayBlock->find("div.nabidka_1") as $i => $item) {
-				$dishes[$i] = iconv('CP1250', 'utf-8', trim($item->plaintext));
+			foreach ($todayBlock->find("ul li.polevka") as $soup) {
+				$result->dishes[] = new Dish($this->toUtf($soup));
 			}
 
-			$prices = [];
-			foreach ($todayBlock->find("div.cena") as $i => $item) {
-				$prices[$i + 1] = iconv('CP1250', 'utf-8', trim($item->plaintext));
-			}
-
-			foreach ($dishes as $i => $dish) {
-				$result->dishes[] = new Dish($dish, isset($prices[$i]) ? $prices[$i] : 0);
+			foreach ($todayBlock->find("ul li.jidlo") as $item) {
+				$dish = $item->find('div.polozka', 0)->plaintext;
+				$price = $item->find('div.cena', 0)->plaintext;
+				$result->dishes[] = new Dish($this->toUtf($dish), $this->toUtf($price));
 			}
 
 		} catch (Exception $e) {
@@ -45,5 +41,9 @@ class MenickaCz extends LunchMenuSource {
 
 		return $result;
 
+	}
+
+	private function toUtf($text) {
+		return iconv('CP1250', 'utf-8', trim($text));
 	}
 }

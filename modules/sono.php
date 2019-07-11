@@ -3,7 +3,7 @@
 class Sono extends LunchMenuSource {
 
 	public $title = 'Flames grill pub & restaurant';
-	public $link = 'http://www.flames-grill.cz/jidelni-listek/#weekmenu';
+	public $link = 'http://www.flames-grill.cz/';
 	public $icon = 'sono-logo';
 
 	public function getTodaysMenu($todayDate, $cacheSourceExpires) {
@@ -14,20 +14,10 @@ class Sono extends LunchMenuSource {
 		}
 		try {
 			$result = new LunchMenuResult($cached['stored']);
-			$today = date('N', $todayDate);
 
-			$todayBlock = $cached['html']->find("div#weekmenu .foods", $today - 1);
-
-			if (!$todayBlock) {
-				throw new ScrapingFailedException("ul.fmenu li.item was not found");
-			}
-
-			foreach ($todayBlock->find("ul.foodlist li") as $i => $item) {
+			foreach ($cached['html']->find("ul.foodlist li") as $i => $item) {
 
 				if ($i == 0) {
-					// First line is date
-					continue;
-				} else if ($i == 1) {
 					// Soup
 					$dishName = $item->plaintext;
 					if ($dishName) {

@@ -16,7 +16,7 @@ foreach(glob(__DIR__ . '/modules/*.php') as $module) {
 
 function get_http_headers() {
 	return implode("\r\n", array(
-		"User-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36",
+		"User-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
 		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
 	)) . "\r\n";
 }
@@ -161,7 +161,9 @@ function cache_download($key, $url, $expires=540) {
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36');
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); //timeout in seconds
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36');
 	$response = curl_exec($ch);
 	curl_close($ch);
 
@@ -175,13 +177,26 @@ function cache_get_html($key, $url, $expires=540) {
 	$cached = cache_retrieve($key, $expires);
 	if ($cached) return $cached;
 
+	$headers = [
+		'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
+		'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	];
+
 	$ch=curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36');
+	curl_setopt($ch, CURLOPT_HTTPHEADER, process_headers($headers));
+	curl_setopt($ch, CURLOPT_HEADER, true);    // we want headers
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); //timeout in seconds
+	$info = curl_getinfo($ch);
 	$response = curl_exec($ch);
 	curl_close($ch);
+
+	if ($info["http_code"] < 200 || $info["http_code"] >= 400) {
+		$response = file_get_contents($url);
+	}
 
 	$html = str_get_html($response);
 	return cache_store($key, [
@@ -359,4 +374,15 @@ function print_html($root, $menus)
 			}
 		}
 	}
+}
+
+function process_headers(array $headers) {
+
+	$res = [];
+	foreach ($headers as $key => $value) {
+		$res[] = sprintf("%s: %s\r\n" , $key, $value);
+	}
+
+	return $res;
+
 }
